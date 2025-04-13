@@ -22,7 +22,7 @@ import {
   );
 
   export const MyChart = () => {
-    const todayLabel = '4/4';
+    const todayLabel = '4/5';
     //   const today = new Date();
     //   const todayLabel = `${today.getMonth() + 1}/${today.getDate()}`;
 

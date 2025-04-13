@@ -22,6 +22,10 @@ import {
   );
 
   export const MyChart = () => {
+    const todayLabel = '4/4';
+    //   const today = new Date();
+    //   const todayLabel = `${today.getMonth() + 1}/${today.getDate()}`;
+
     const data = {
       labels: ['4/1', '4/2', '4/3', '4/4', '4/5', '4/5', '4/5'],
       datasets: [
@@ -58,6 +62,25 @@ import {
         title: {
           display: true,
           text: 'EVM 進捗グラフ（PV / AC / EV）',
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            callback: function (value: any, index: number, ticks: any) {
+                const label = data.labels[value];
+                if (label === todayLabel) {
+                  return `本日:${label}`;
+                }
+              return label;
+            },
+            color: (context: any) => {
+                const value = context.tick.value;
+                const label = data.labels[value];
+                return label === todayLabel ? 'red' : undefined;
+
+            },
+          },
         },
       },
     };

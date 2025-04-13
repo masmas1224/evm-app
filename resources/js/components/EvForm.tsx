@@ -7,7 +7,7 @@ const AcForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/ac_record', {
+    const res = await fetch('/ev_record', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

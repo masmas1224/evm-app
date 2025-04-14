@@ -21,9 +21,6 @@ Route::get('/react', function () {
     return view('react'); // resources/views/react.blade.php に対応
 });
 
-use App\Http\Controllers\HelloController;
-Route::get('/hello', [HelloController::class, 'index']);
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -32,6 +29,7 @@ use App\Http\Controllers\EvmController;
 Route::post('/ac_record', [EvmController::class, 'evmAcIndex']);
 Route::post('/pv_record', [EvmController::class, 'evmPvIndex']);
 Route::post('/ev_record', [EvmController::class, 'evmEvIndex']);
+Route::post('/chart', [EvmController::class, 'evmChart']);
 
 // Route::post('/ac_record',function (Request $request) {
 //     $data = $request->json()->all();

@@ -9,6 +9,7 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
+
   import { Line } from 'react-chartjs-2';
 
   ChartJS.register(
@@ -21,44 +22,63 @@ import {
     Legend
   );
 
-  export const MyChart = () => {
-    const todayLabel = '4/5';
-    //   const today = new Date();
-    //   const todayLabel = `${today.getMonth() + 1}/${today.getDate()}`;
+  import React, { useEffect, useState } from 'react';
+  const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    const data = {
-      labels: ['4/1', '4/2', '4/3', '4/4', '4/5', '4/5', '4/5'],
-      datasets: [
-        {
-          label: '計画値（PV）',
-          data: [1, 2, 3, 4, 6,7,8],
-          borderColor: 'rgba(54, 162, 235, 1)',
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          tension: 0.3,
+  export const MyChart = () => {
+    const [chartData, setChartData] = useState<any>(null);
+
+    const todayLabel = new Date().toISOString().slice(0, 10); // 例: '2025-04-14'
+
+    useEffect(() => {
+      fetch('/chart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token || '',
         },
-        {
-          label: '実績値（AC）',
-          data: [1, 1.5, 2.5, 3, 3.5],
-          borderColor: 'rgba(255, 99, 132, 1)',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          tension: 0.3,
-        },
-        {
-          label: '出来高（EV）',
-          data: [1, 2, 2.5, 3.5, 4],
-          borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          tension: 0.3,
-        }
-      ],
-    };
+      })
+        .then((res) => res.json())
+        .then((res) => {
+            console.log('レスポンス:', res); // ← ココ追加！
+          if (res.status === 'ok') {
+            const raw = res.data;
+            console.log('取得データ:', raw); // ← ココ追加！
+            setChartData({
+              labels: raw.map((r: any) => r.date),
+              datasets: [
+                {
+                  label: '計画値（PV）',
+                  data: raw.map((r: any) => r.pvHours ?? 0),
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  tension: 0.3,
+                },
+                {
+                  label: '実績値（AC）',
+                  data: raw.map((r: any) => r.acHours ?? 0),
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  tension: 0.3,
+                },
+                {
+                  label: '出来高（EV）',
+                  data: raw.map((r: any) => r.evHours ?? 0),
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  tension: 0.3,
+                },
+              ],
+            });
+          }
+        })
+        .catch(console.error);
+    }, []);
 
     const options = {
       responsive: true,
       plugins: {
-        legend: {
-          position: 'top' as const,
-        },
+        legend: { position: 'top' as const },
         title: {
           display: true,
           text: 'EVM 進捗グラフ（PV / AC / EV）',
@@ -67,25 +87,22 @@ import {
       scales: {
         x: {
           ticks: {
-            callback: function (value: any, index: number, ticks: any) {
-                const label = data.labels[value];
-                if (label === todayLabel) {
-                  return `本日:${label}`;
-                }
-              return label;
+            callback: function (value: any) {
+              const label = chartData?.labels?.[value];
+              return label === todayLabel ? `本日:${label}` : label;
             },
-            color: (context: any) => {
-                const value = context.tick.value;
-                const label = data.labels[value];
-                return label === todayLabel ? 'red' : undefined;
-
+            color: function (context: any) {
+              const label = chartData?.labels?.[context.tick.value];
+              return label === todayLabel ? 'red' : undefined;
             },
           },
         },
       },
     };
 
-    return <Line data={data} options={options} />;
+    if (!chartData) return <p>読み込み中...</p>;
+
+    return <Line data={chartData} options={options} />;
   };
 
   export default MyChart;

@@ -27,6 +27,7 @@ cp .env.example .env
 php artisan key:generate
 npm run dev
 php artisan serve
+WebSocket 予定
 
 ## 設計思想
 

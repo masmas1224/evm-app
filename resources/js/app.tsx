@@ -4,16 +4,19 @@ import MyChart from './components/MyChart';
 import AcForm from './components/AcForm';
 import EvForm from './components/EvForm';
 import PvForm from './components/PvForm';
+import DetailList from './components/DetailList';
+import '../css/app.css';
+
 const App = () => {
   return (
     <React.StrictMode>
       <h1>📊 工数グラフ</h1>
-      PV---<PvForm /> {/* ← フォームを追加！ */}
-      AC---<AcForm /> {/* ← フォームを追加！ */}
-      EV---<EvForm /> {/* ← フォームを追加！ */}
+      PV---<PvForm />
+      AC---<AcForm />
+      EV---<EvForm />
       <MyChart />
+      <DetailList />
     </React.StrictMode>
-
   );
 };
 

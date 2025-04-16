@@ -85,10 +85,24 @@ export const MyChart = () => {
   const options = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' as const },
+      legend: {
+        position: 'top' as const,
+        labels: {
+          color: '#d4d4d4', // ラベルの色（明るめグレー）
+          font: {
+            size: 12,
+            family: 'Segoe UI, sans-serif',
+          },
+        },
+      },
       title: {
         display: true,
         text: 'EVM 進捗グラフ（PV / AC / EV）',
+        color: '#ffffff',
+        font: {
+          size: 16,
+          family: 'Segoe UI, sans-serif',
+        },
       },
     },
     scales: {
@@ -100,16 +114,40 @@ export const MyChart = () => {
           },
           color: function (context: any) {
             const label = chartData?.labels?.[context.tick.value];
-            return label === todayLabel ? 'red' : undefined;
+            return label === todayLabel ? '#ff5e5e' : '#c0c0c0'; // 通常グレー、今日だけ赤
           },
+          font: {
+            size: 11,
+            family: 'Consolas, monospace',
+          },
+        },
+        grid: {
+          color: '#333333',
+        },
+      },
+      y: {
+        ticks: {
+          color: '#c0c0c0',
+          font: {
+            size: 11,
+            family: 'Consolas, monospace',
+          },
+        },
+        grid: {
+          color: '#333333',
         },
       },
     },
   };
 
+
   if (!chartData) return <p>読み込み中...</p>;
 
-  return <Line data={chartData} options={options} />;
+  return (
+        <div className="chart-wrapper" style={{ width: '100%', maxWidth: '900px', height: '450px' }}>
+            <Line data={chartData} options={options} />
+        </div>
+      );
 };
 
 export default MyChart;

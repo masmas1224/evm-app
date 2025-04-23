@@ -11,6 +11,7 @@ const DetailList = () => {
   const [details, setDetails] = useState<Detail[]>([]);
 
   useEffect(() => {
+    const fetchData = () => {
     fetch('/chart', {
       method: 'POST',
       headers: {
@@ -30,6 +31,16 @@ const DetailList = () => {
           setDetails(formatted);
         }
       });
+    };
+  // 初回実行
+  fetchData();
+
+  // 10秒ごとに実行
+  const intervalId = setInterval(fetchData, 10000);
+
+  // アンマウント時にクリーンアップ
+  return () => clearInterval(intervalId);
+
   }, []);
 
   const handleChange = (index: number, field: keyof Detail, value: string) => {
